@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                   congratsSequel.setVisibility(View.VISIBLE);
                   congratsAppeared = true;
                   if (record > coffer.getAdapterCount()) {
-                     Toast.makeText(MainActivity.this, "record should be rewritten!", Toast.LENGTH_SHORT).show();
                      record = coffer.getAdapterCount();
                      MainActivity.this.setTitle(getResources().getString(R.string.record) + " " + record);
                   }
