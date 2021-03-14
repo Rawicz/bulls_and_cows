@@ -2,6 +2,7 @@ package com.example.bullscows;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,7 @@ import java.util.ArrayList;
 
 public class RowsAdapter extends ArrayAdapter<String> {
    private Context context;
-   private ArrayList<Integer> bullsList = new ArrayList<>();
-   private ArrayList<Integer> cowsList = new ArrayList<>();
    private String keyword;
-   private int count = 0;
 
    public RowsAdapter(@NonNull Context context, String keyword) {
       super(context, R.layout.row, R.id.value);
@@ -26,6 +24,7 @@ public class RowsAdapter extends ArrayAdapter<String> {
       this.keyword = keyword;
    }
 
+   @SuppressLint("SetTextI18n")
    @NonNull
    @Override
    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -42,10 +41,18 @@ public class RowsAdapter extends ArrayAdapter<String> {
       TextView cows = row.findViewById(R.id.cows);
 
       String item = getItem(position);
-      index.setText(String.valueOf(position + 1));
+      index.setText((position + 1) + ".");
       value.setText(item);
-      bulls.setText(String.valueOf(findBulls(item)));
-      cows.setText(String.valueOf(findCows(item)));
+      int bullsValue = findBulls(item);
+      bulls.setText(String.valueOf(bullsValue));
+      cows.setText(String.valueOf(findCows(item, bullsValue)));
+
+      if (item.equals(keyword)) {
+         index.setTypeface(index.getTypeface(), Typeface.BOLD);
+         value.setTypeface(value.getTypeface(), Typeface.BOLD_ITALIC);
+         bulls.setTypeface(bulls.getTypeface(), Typeface.BOLD_ITALIC);
+         cows.setTypeface(cows.getTypeface(), Typeface.BOLD_ITALIC);
+      }
       return row;
    }
 
@@ -62,19 +69,20 @@ public class RowsAdapter extends ArrayAdapter<String> {
       return bulls;
    }
 
-   public int findCows(String object) {
+   public int findCows(String object, int bulls) {
       int cows = 0;
       char[] keywordCopy = keyword.toCharArray();
       char shot;
       for (int i = 0; i < 4; i++) {
          shot = object.charAt(i);
          for (int j = 0; j < 4; j++) {
-            if (j != i && keywordCopy[j] == shot){
+            if (keywordCopy[j] == shot) {
                cows++;
                keywordCopy[j] = '*';
+               break;
             }
          }
       }
-      return cows;
+      return cows - bulls;
    }
 }

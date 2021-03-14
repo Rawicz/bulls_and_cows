@@ -4,6 +4,7 @@
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="brown">#FF441800</color>
+    <color name="brown_limpid">#88441800</color>
     <color name="dark_brown">#FF240800</color>
     <color name="beige">#FFECCC98</color>
     <color name="teal_200">#FF03DAC5</color>
@@ -11,4 +12,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="pale">#FFEEEEEE</color>
+    <color name="pale_limpid">#AAEEEEEE</color>
 </resources>

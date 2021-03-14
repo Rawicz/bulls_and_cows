@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Bulls&amp;Cows</string>
+    <string name="record">Your record:</string>
+    <string name="check">TRY!</string>
+    <string name="congrats">CONGRATULATIONS!</string>
+    <string name="you_won_with">YOU WON WITH</string>
+    <string name="attempts">ATTEMPTS!</string>
 </resources>
