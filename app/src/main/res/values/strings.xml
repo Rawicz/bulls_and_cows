@@ -5,4 +5,17 @@
     <string name="congrats">CONGRATULATIONS!</string>
     <string name="you_won_with">YOU WON WITH</string>
     <string name="attempts">ATTEMPTS!</string>
+    <string name="info_text">
+        This game is called &quot;Bulls &amp; Cows&quot;. At the opening, the game settles a
+    hidden number, which you don\&apos;t know. The goal is to guess the number with minimum amount of attempts.
+    Each try, the game will tell the info about the number you suggested and store it.
+    &quot;B&quot; is for Bulls, and it\&apos;s number tells how much digits match the digits of the hidden number
+    both with value and position. &quot;C&quot; is for Cows, and tells how much digits match the value
+    but don\&apos;t match the position. For examples, if the hidden number is 1234, and you\&apos;ve tried 9243,
+    the game would tell you that there are 1 Bull (digit 2) and two Cows (digits 4 and 3).
+    At the top-right corner you have the &quot;new game&quot; button. You record is at the top-left.&#xA;
+        Have fun!
+    </string>
+    <string name="ok">got it!</string>
+    <string name="renew_record">renew the record</string>
 </resources>

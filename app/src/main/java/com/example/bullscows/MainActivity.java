@@ -1,42 +1,54 @@
 package com.example.bullscows;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// TODO: store record in SharedPreferences instead of InstanceState
-// TODO: add button that renews the record
-// TODO: make popup window which appears when ifo is pressed
 // TODO: make icon for the application
 public class MainActivity extends AppCompatActivity {
-   // AndroidViewModel which stores ListView adapter with all data
-   Coffer coffer;
-   // used views and variables
+   View rulesView;
+   AlertDialog rulesDialog;
    ListView attempts;
    Button check;
    EditText input;
    TextView congrats;
    TextView congratsSequel;
+   SharedPreferences sharedData;
    boolean congratsAppeared = false;
-   int record = 999;
+   int record;
+   // AndroidViewModel which stores ListView adapter with all data
+   Coffer coffer;
 
+   @SuppressLint("InflateParams")
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
-      setTitle(getResources().getString(R.string.record) + " N/A");
+
+      // #RECORD setting record and adding it to title
+      sharedData = getSharedPreferences("record", MODE_PRIVATE);
+      record = sharedData.getInt("record", 999);
+      if (record < 999)
+         setTitle(getResources().getString(R.string.record) + " " + record);
+      else
+         setTitle(getResources().getString(R.string.record) + " N/A");
 
       // initializing views
       attempts = findViewById(R.id.attempts);
@@ -45,13 +57,14 @@ public class MainActivity extends AppCompatActivity {
       congrats = findViewById(R.id.congrats);
       congratsSequel = findViewById(R.id.congrats_2);
 
-      // initialising AndroidViewModel and setting it to the ListVeiew
-      this.coffer = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(Coffer.class);
+      // initialising AndroidViewModel and setting it to the ListView
+      this.coffer = new ViewModelProvider(this,
+            new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(Coffer.class);
       coffer.adapt(attempts);
-      // FIXME: delete this after testing
-      Toast.makeText(this, "keyword: " + coffer.getKeyword(), Toast.LENGTH_SHORT).show();
+      // ~ For #TESTING
+//      Toast.makeText(this, "keyword: " + coffer.getKeyword(), Toast.LENGTH_SHORT).show();
 
-      // When Button is pressed:
+      // * When Button is pressed:
       // 1. Adds suggested number in the ListView, which is then processed by the adapter.
       // 2. If adapter tells that the number is successful, hides the interface and shows congratulation message.
       check.setOnClickListener(new View.OnClickListener() {
@@ -69,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
                         coffer.getAdapterCount() + " " + getResources().getString(R.string.attempts));
                   congratsSequel.setVisibility(View.VISIBLE);
                   congratsAppeared = true;
+                  // #RECORD
                   if (record > coffer.getAdapterCount()) {
                      record = coffer.getAdapterCount();
+                     sharedData.edit().putInt("record", record).apply();
                      MainActivity.this.setTitle(getResources().getString(R.string.record) + " " + record);
                   }
                }
@@ -81,20 +96,9 @@ public class MainActivity extends AppCompatActivity {
             }
          }
       });
-   }
 
-   @Override
-   protected void onSaveInstanceState(@NonNull Bundle outState) {
-      super.onSaveInstanceState(outState);
-      outState.putInt("record", record);
-   }
-
-   @Override
-   protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-      super.onRestoreInstanceState(savedInstanceState);
-      record = savedInstanceState.getInt("record");
-      if (record < 999)
-         setTitle(getResources().getString(R.string.record) + " " + record);
+      // #RULES initialising AlertDialog for "rules" option in OptionsMenu
+      initRulesDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
    }
 
    @Override
@@ -105,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
    }
 
    /**
-    * When new_game option selected:
+    * * When new_game option selected:
     * 1. Renews the adapter in the ViewModel.
     * 2. If congratulation screen is appeared, hides it and shows back the interface views.
-    * When rules option selected:
+    * * When rules option selected:
     * Shows screen which explains the rules.
     */
    @SuppressLint("NonConstantResourceId")
@@ -123,14 +127,42 @@ public class MainActivity extends AppCompatActivity {
                input.setVisibility(View.VISIBLE);
                check.setVisibility(View.VISIBLE);
             }
-            // FIXME: delete this after testing
-            Toast.makeText(this, "keyword: " + coffer.getKeyword(), Toast.LENGTH_SHORT).show();
+            // ~ For #TESTING
+//            Toast.makeText(this, "keyword: " + coffer.getKeyword(), Toast.LENGTH_SHORT).show();
             break;
          case R.id.rules:
-            Toast.makeText(this, "guess the number in minimum tries", Toast.LENGTH_SHORT).show();
+            // #RULES
+            rulesDialog.show();
+            // ~ The following would give the AlertDialog max size
+//            int matchParent = WindowManager.LayoutParams.MATCH_PARENT;
+//            rulesDialog.getWindow().setLayout(matchParent, matchParent);
+//            rulesDialog.setContentView(rulesView);
             break;
       }
       return super.onOptionsItemSelected(item);
+   }
+
+   /**
+    * #RULES
+    * Initializes AlertDialog for {@link MainActivity#rulesDialog}
+    * Used for the rules option of OptionsMenu
+    */
+   @SuppressLint("InflateParams")
+   private AlertDialog initRulesDialog() {
+      rulesView = getLayoutInflater().inflate(R.layout.info, null);
+      AlertDialog.Builder rulesBuilder = new AlertDialog.Builder(this);
+      rulesDialog = rulesBuilder.setView(rulesView).create();
+      // setting AlertDialog views preferences
+      ((TextView)rulesView.findViewById(R.id.info_text)).setMovementMethod(new ScrollingMovementMethod());
+      rulesView.findViewById(R.id.ok).setOnClickListener(v -> rulesDialog.cancel());
+      // #RECORD renews the record
+      rulesView.findViewById(R.id.renew_record).setOnClickListener(v -> {
+         record = 999;
+         sharedData.edit().putInt("record", record).apply();
+         MainActivity.this.setTitle(getResources().getString(R.string.record) + " N/A");
+         rulesDialog.cancel();
+      });
+      return rulesDialog;
    }
 
 }
