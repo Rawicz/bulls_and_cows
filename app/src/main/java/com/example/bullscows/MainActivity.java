@@ -42,22 +42,30 @@ public class MainActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
+      // #RULES initialising AlertDialog for "rules" option in OptionsMenu
+      initRulesDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+      // * SharedPreferences
       // #RECORD setting record and adding it to title
-      sharedData = getSharedPreferences("record", MODE_PRIVATE);
+      sharedData = getSharedPreferences("data", MODE_PRIVATE);
       record = sharedData.getInt("record", 999);
       if (record < 999)
          setTitle(getResources().getString(R.string.record) + " " + record);
       else
          setTitle(getResources().getString(R.string.record) + " N/A");
+      // #RULES are opened at first launch
+      if (sharedData.getBoolean("first launch", true))
+         rulesDialog.show();
+      sharedData.edit().putBoolean("first launch", false).apply();
 
-      // initializing views
+      // * Initializing views
       attempts = findViewById(R.id.attempts);
       check = findViewById(R.id.check);
       input = findViewById(R.id.input);
       congrats = findViewById(R.id.congrats);
       congratsSequel = findViewById(R.id.congrats_2);
 
-      // initialising AndroidViewModel and setting it to the ListView
+      // * Initialising AndroidViewModel and setting it to the ListView
       this.coffer = new ViewModelProvider(this,
             new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(Coffer.class);
       coffer.adapt(attempts);
@@ -96,9 +104,6 @@ public class MainActivity extends AppCompatActivity {
             }
          }
       });
-
-      // #RULES initialising AlertDialog for "rules" option in OptionsMenu
-      initRulesDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
    }
 
    @Override

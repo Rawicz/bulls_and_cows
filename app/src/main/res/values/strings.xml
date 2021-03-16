@@ -13,7 +13,7 @@
     both with value and position. &quot;C&quot; is for Cows, and tells how much digits match the value
     but don\&apos;t match the position. For examples, if the hidden number is 1234, and you\&apos;ve tried 9243,
     the game would tell you that there are 1 Bull (digit 2) and two Cows (digits 4 and 3).
-    At the top-right corner you have the &quot;new game&quot; button. You record is at the top-left.&#xA;
+    At the top-right corner you have the &quot;new game&quot; button. You record is at the top-left.\n
         Have fun!
     </string>
     <string name="ok">got it!</string>
