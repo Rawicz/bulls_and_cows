@@ -39,9 +39,6 @@ public class Coffer extends AndroidViewModel {
    public boolean addValue(String value) {
       adapter.add(value);
       won = value.equals(keyword);
-      if (won) {
-
-      }
       return won;
    }
 
