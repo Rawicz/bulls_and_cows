@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
       congrats = findViewById(R.id.congrats);
       congratsSequel = findViewById(R.id.congrats_2);
 
-      // * Initialising AndroidViewModel and setting it to the ListView
+      // * Initialising AndroidViewModel and setting it's RowAdapter to the ListView
       this.coffer = new ViewModelProvider(this,
             new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(Coffer.class);
       coffer.adapt(attempts);
