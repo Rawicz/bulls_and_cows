@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class Coffer extends AndroidViewModel {
+   public boolean won = false;
    private String keyword;
    private final RowsAdapter adapter;
 
@@ -37,7 +38,11 @@ public class Coffer extends AndroidViewModel {
 
    public boolean addValue(String value) {
       adapter.add(value);
-      return value.equals(keyword);
+      won = value.equals(keyword);
+      if (won) {
+
+      }
+      return won;
    }
 
    public void renewAdapter() {

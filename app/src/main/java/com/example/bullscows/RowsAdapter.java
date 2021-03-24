@@ -29,30 +29,25 @@ public class RowsAdapter extends ArrayAdapter<String> {
    @Override
    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
       LayoutInflater inflater = LayoutInflater.from(context);
+      String item = getItem(position);
       View row;
-      if (convertView == null)
-         row = inflater.inflate(R.layout.row, parent, false);
+
+      if (item.equals(keyword))
+         row = inflater.inflate(R.layout.bold_row, parent, false);
       else
-         row = convertView;
+         row = inflater.inflate(R.layout.row, parent, false);
 
       TextView index = row.findViewById(R.id.index);
       TextView value = row.findViewById(R.id.value);
       TextView bulls = row.findViewById(R.id.bulls);
       TextView cows = row.findViewById(R.id.cows);
 
-      String item = getItem(position);
       index.setText((position + 1) + ".");
       value.setText(item);
       int bullsValue = findBulls(item);
       bulls.setText(String.valueOf(bullsValue));
       cows.setText(String.valueOf(findCows(item, bullsValue)));
 
-      if (item.equals(keyword)) {
-         index.setTypeface(index.getTypeface(), Typeface.BOLD);
-         value.setTypeface(value.getTypeface(), Typeface.BOLD_ITALIC);
-         bulls.setTypeface(bulls.getTypeface(), Typeface.BOLD_ITALIC);
-         cows.setTypeface(cows.getTypeface(), Typeface.BOLD_ITALIC);
-      }
       return row;
    }
 

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -14,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -30,12 +32,11 @@ public class MainActivity extends AppCompatActivity {
    TextView congrats;
    TextView congratsSequel;
    SharedPreferences sharedData;
-   boolean congratsAppeared = false;
    int record;
    // AndroidViewModel which stores ListView adapter with all data
    Coffer coffer;
 
-   @SuppressLint("InflateParams")
+   @SuppressLint({"InflateParams", "SetTextI18n"})
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -63,11 +64,19 @@ public class MainActivity extends AppCompatActivity {
       input = findViewById(R.id.input);
       congrats = findViewById(R.id.congrats);
       congratsSequel = findViewById(R.id.congrats_2);
-
-      // * Initialising AndroidViewModel and setting it's RowAdapter to the ListView
+      // Initialising AndroidViewModel and setting it's RowAdapter to the ListView
       this.coffer = new ViewModelProvider(this,
             new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(Coffer.class);
       coffer.adapt(attempts);
+      // Showing congrats message if the game is won
+      if (coffer.won) {
+         input.setVisibility(View.GONE);
+         check.setVisibility(View.GONE);
+         congrats.setVisibility(View.VISIBLE);
+         congratsSequel.setText(getResources().getString(R.string.you_won_with) + " " +
+               coffer.getAdapterCount() + " " + getResources().getString(R.string.attempts));
+         congratsSequel.setVisibility(View.VISIBLE);
+      }
       // ~ For #TESTING
 //      Toast.makeText(this, "keyword: " + coffer.getKeyword(), Toast.LENGTH_SHORT).show();
 
@@ -82,13 +91,14 @@ public class MainActivity extends AppCompatActivity {
             try {
                if (inputValue.length() != 4) throw new RuntimeException("Invalid input!");
                else if (coffer.addValue(inputValue)) {
+                  ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(input.getWindowToken(), 0);
                   input.setVisibility(View.GONE);
                   check.setVisibility(View.GONE);
                   congrats.setVisibility(View.VISIBLE);
                   congratsSequel.setText(getResources().getString(R.string.you_won_with) + " " +
                         coffer.getAdapterCount() + " " + getResources().getString(R.string.attempts));
                   congratsSequel.setVisibility(View.VISIBLE);
-                  congratsAppeared = true;
                   // #RECORD
                   if (record > coffer.getAdapterCount()) {
                      record = coffer.getAdapterCount();
@@ -125,11 +135,12 @@ public class MainActivity extends AppCompatActivity {
       switch (item.getItemId()) {
          case R.id.new_game:
             coffer.renewAdapter();
-            if (congratsAppeared) {
+            if (coffer.won) {
                congrats.setVisibility(View.GONE);
                congratsSequel.setVisibility(View.GONE);
                input.setVisibility(View.VISIBLE);
                check.setVisibility(View.VISIBLE);
+               coffer.won = false;
             }
             // ~ For #TESTING
 //            Toast.makeText(this, "keyword: " + coffer.getKeyword(), Toast.LENGTH_SHORT).show();
