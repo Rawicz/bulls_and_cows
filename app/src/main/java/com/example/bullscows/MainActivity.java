@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// TODO: make icon for the application
 public class MainActivity extends AppCompatActivity {
    View rulesView;
    AlertDialog rulesDialog;
